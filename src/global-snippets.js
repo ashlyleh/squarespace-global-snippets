@@ -889,70 +889,85 @@
       this.updateStorageInfo();
     }
 
-    attachEventListeners() {
-      // Tab switching
-      this.controlPanel.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', (e) => {
-          const tabName = e.target.dataset.tab;
-          this.switchTab(tabName);
-        });
-      });
-    
-      // Minimize/Maximize toggle
-      const minimizeBtn = document.getElementById('minimize-panel');
-      minimizeBtn.addEventListener('click', () => {
-        this.controlPanel.classList.toggle('minimized');
-        // Update button text
-        if (this.controlPanel.classList.contains('minimized')) {
-          minimizeBtn.textContent = '+';
-          minimizeBtn.title = 'Maximize';
-        } else {
-          minimizeBtn.textContent = '−';
-          minimizeBtn.title = 'Minimize';
-        }
-      });
-      
-      // Help
-      document.getElementById('help-panel').addEventListener('click', () => {
-        this.showHelp();
-      });
+attachEventListeners() {
+  // Tab switching
+  this.controlPanel.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      const tabName = e.target.dataset.tab;
+      this.switchTab(tabName);
+    });
+  });
 
-      // Create global snippet
-      document.getElementById('create-global-snippet').addEventListener('click', () => {
-        this.createGlobalSnippet();
-      });
+  // Minimize button
+  const minimizeBtn = document.getElementById('minimize-panel');
+  minimizeBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevent triggering panel click
+    this.toggleMinimize();
+  });
 
-      // Sync all
-      document.getElementById('sync-all-snippets').addEventListener('click', () => {
-        this.syncAllSnippets();
-      });
-
-      // Import/Export
-      document.getElementById('import-export').addEventListener('click', () => {
-        this.showImportExport();
-      });
-
-      // Settings
-      document.getElementById('auto-save-toggle').addEventListener('change', (e) => {
-        CONFIG.autoSave = e.target.checked;
-        this.showStatus('Settings saved', 'success');
-      });
-
-      document.getElementById('debug-mode-toggle').addEventListener('change', (e) => {
-        CONFIG.debugMode = e.target.checked;
-        this.showStatus('Debug mode ' + (CONFIG.debugMode ? 'enabled' : 'disabled'), 'info');
-      });
-
-      document.getElementById('version-limit').addEventListener('change', (e) => {
-        CONFIG.maxVersionHistory = parseInt(e.target.value);
-        this.showStatus('Version limit updated', 'success');
-      });
-
-      // Clear all data
-      document.getElementById('clear-all-data').addEventListener('click', () => {
-        this.clearAllData();
-      });
+  // Click anywhere on minimized panel to expand
+  this.controlPanel.addEventListener('click', (e) => {
+    if (this.controlPanel.classList.contains('minimized')) {
+      this.toggleMinimize();
     }
+  });
+
+  // Help
+  document.getElementById('help-panel').addEventListener('click', () => {
+    this.showHelp();
+  });
+
+  // Create global snippet
+  document.getElementById('create-global-snippet').addEventListener('click', () => {
+    this.createGlobalSnippet();
+  });
+
+  // Sync all
+  document.getElementById('sync-all-snippets').addEventListener('click', () => {
+    this.syncAllSnippets();
+  });
+
+  // Import/Export
+  document.getElementById('import-export').addEventListener('click', () => {
+    this.showImportExport();
+  });
+
+  // Settings
+  document.getElementById('auto-save-toggle').addEventListener('change', (e) => {
+    CONFIG.autoSave = e.target.checked;
+    this.showStatus('Settings saved', 'success');
+  });
+
+  document.getElementById('debug-mode-toggle').addEventListener('change', (e) => {
+    CONFIG.debugMode = e.target.checked;
+    this.showStatus('Debug mode ' + (CONFIG.debugMode ? 'enabled' : 'disabled'), 'info');
+  });
+
+  document.getElementById('version-limit').addEventListener('change', (e) => {
+    CONFIG.maxVersionHistory = parseInt(e.target.value);
+    this.showStatus('Version limit updated', 'success');
+  });
+
+  // Clear all data
+  document.getElementById('clear-all-data').addEventListener('click', () => {
+    this.clearAllData();
+  });
+}
+
+    // Add this new method to the UIManager class
+toggleMinimize() {
+  const minimizeBtn = document.getElementById('minimize-panel');
+  this.controlPanel.classList.toggle('minimized');
+  
+  // Update button text and tooltip
+  if (this.controlPanel.classList.contains('minimized')) {
+    minimizeBtn.innerHTML = '✂️';
+    minimizeBtn.title = 'Click to expand';
+  } else {
+    minimizeBtn.textContent = '−';
+    minimizeBtn.title = 'Minimize';
+  }
+}
 
     setupSelectionHandler() {
       let indicator = null;
