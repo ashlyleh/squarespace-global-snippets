@@ -1,8 +1,8 @@
 /**
  * Squarespace Global Snippets
  * A powerful system for creating reusable, synchronized content snippets
- * @version 1.0.0
- * @author Your Name
+ * @version 1.0.1
+ * @author Ashley Lehane
  * @license MIT
  */
 
@@ -11,12 +11,12 @@
 
   // Configuration
   const CONFIG = {
-    version: '1.0.0',
+    version: '1.0.1',
     apiBase: '/api/content',
     storageKey: 'globalSnippetsData',
     snippetAttribute: 'data-global-snippet-id',
     snippetVersionAttribute: 'data-global-snippet-version',
-    debugMode: false,
+    debugMode: true, // Set to true by default for easier debugging
     autoSave: true,
     autoSaveDelay: 2000,
     maxVersionHistory: 10
@@ -293,7 +293,7 @@
       this.markExistingSnippets();
     }
 
-injectStyles() {
+    injectStyles() {
       const style = document.createElement('style');
       style.id = 'global-snippets-styles';
       style.textContent = `
@@ -912,85 +912,83 @@ injectStyles() {
       this.updateStorageInfo();
     }
 
-attachEventListeners() {
-  // Tab switching
-  this.controlPanel.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', (e) => {
-      const tabName = e.target.dataset.tab;
-      this.switchTab(tabName);
-    });
-  });
+    attachEventListeners() {
+      // Tab switching
+      this.controlPanel.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+          const tabName = e.target.dataset.tab;
+          this.switchTab(tabName);
+        });
+      });
 
-  // Minimize button
-  const minimizeBtn = document.getElementById('minimize-panel');
-  minimizeBtn.addEventListener('click', (e) => {
-    e.stopPropagation(); // Prevent triggering panel click
-    this.toggleMinimize();
-  });
+      // Minimize button
+      const minimizeBtn = document.getElementById('minimize-panel');
+      minimizeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleMinimize();
+      });
 
-  // Click anywhere on minimized panel to expand
-  this.controlPanel.addEventListener('click', (e) => {
-    if (this.controlPanel.classList.contains('minimized')) {
-      this.toggleMinimize();
+      // Click anywhere on minimized panel to expand
+      this.controlPanel.addEventListener('click', (e) => {
+        if (this.controlPanel.classList.contains('minimized')) {
+          this.toggleMinimize();
+        }
+      });
+
+      // Help
+      document.getElementById('help-panel').addEventListener('click', () => {
+        this.showHelp();
+      });
+
+      // Create global snippet
+      document.getElementById('create-global-snippet').addEventListener('click', () => {
+        this.createGlobalSnippet();
+      });
+
+      // Sync all
+      document.getElementById('sync-all-snippets').addEventListener('click', () => {
+        this.syncAllSnippets();
+      });
+
+      // Import/Export
+      document.getElementById('import-export').addEventListener('click', () => {
+        this.showImportExport();
+      });
+
+      // Settings
+      document.getElementById('auto-save-toggle').addEventListener('change', (e) => {
+        CONFIG.autoSave = e.target.checked;
+        this.showStatus('Settings saved', 'success');
+      });
+
+      document.getElementById('debug-mode-toggle').addEventListener('change', (e) => {
+        CONFIG.debugMode = e.target.checked;
+        this.showStatus('Debug mode ' + (CONFIG.debugMode ? 'enabled' : 'disabled'), 'info');
+      });
+
+      document.getElementById('version-limit').addEventListener('change', (e) => {
+        CONFIG.maxVersionHistory = parseInt(e.target.value);
+        this.showStatus('Version limit updated', 'success');
+      });
+
+      // Clear all data
+      document.getElementById('clear-all-data').addEventListener('click', () => {
+        this.clearAllData();
+      });
     }
-  });
 
-  // Help
-  document.getElementById('help-panel').addEventListener('click', () => {
-    this.showHelp();
-  });
-
-  // Create global snippet
-  document.getElementById('create-global-snippet').addEventListener('click', () => {
-    this.createGlobalSnippet();
-  });
-
-  // Sync all
-  document.getElementById('sync-all-snippets').addEventListener('click', () => {
-    this.syncAllSnippets();
-  });
-
-  // Import/Export
-  document.getElementById('import-export').addEventListener('click', () => {
-    this.showImportExport();
-  });
-
-  // Settings
-  document.getElementById('auto-save-toggle').addEventListener('change', (e) => {
-    CONFIG.autoSave = e.target.checked;
-    this.showStatus('Settings saved', 'success');
-  });
-
-  document.getElementById('debug-mode-toggle').addEventListener('change', (e) => {
-    CONFIG.debugMode = e.target.checked;
-    this.showStatus('Debug mode ' + (CONFIG.debugMode ? 'enabled' : 'disabled'), 'info');
-  });
-
-  document.getElementById('version-limit').addEventListener('change', (e) => {
-    CONFIG.maxVersionHistory = parseInt(e.target.value);
-    this.showStatus('Version limit updated', 'success');
-  });
-
-  // Clear all data
-  document.getElementById('clear-all-data').addEventListener('click', () => {
-    this.clearAllData();
-  });
-}
-
-    // Add this new method to the UIManager class
-toggleMinimize() {
-  const minimizeBtn = document.getElementById('minimize-panel');
-  this.controlPanel.classList.toggle('minimized');
-  
-  // Update button text and tooltip
-  if (this.controlPanel.classList.contains('minimized')) {
-    minimizeBtn.innerHTML = '✂️';
-    minimizeBtn.title = 'Click to expand';
-  } else {
-    minimizeBtn.textContent = '−';
-    minimizeBtn.title = 'Minimize';
-  }
-}
+    toggleMinimize() {
+      const minimizeBtn = document.getElementById('minimize-panel');
+      this.controlPanel.classList.toggle('minimized');
+      
+      if (this.controlPanel.classList.contains('minimized')) {
+        minimizeBtn.innerHTML = '✂️';
+        minimizeBtn.title = 'Click to expand';
+      } else {
+        minimizeBtn.textContent = '−';
+        minimizeBtn.title = 'Minimize';
+      }
+    }
 
     setupSelectionHandler() {
       let indicator = null;
@@ -1000,7 +998,6 @@ toggleMinimize() {
 
         const element = e.target;
         
-        // Check if it's a valid block
         if (!this.isValidBlock(element)) {
           if (indicator) {
             indicator.remove();
@@ -1009,7 +1006,6 @@ toggleMinimize() {
           return;
         }
 
-        // Create or update indicator
         if (!indicator) {
           indicator = document.createElement('div');
           indicator.className = 'selection-indicator';
@@ -1434,8 +1430,8 @@ toggleMinimize() {
           </ul>
 
           <h3>🔗 GitHub Repository</h3>
-          <p>🤔 For updates, documentation, and support:</p>
-          <p><a href="https://github.com/yourusername/squarespace-global-snippets" target="_blank" style="color: #FF6B6B;">github.com/yourusername/squarespace-global-snippets</a></p>
+          <p>For updates, documentation, and support:</p>
+          <p><a href="https://github.com/ashlyleh/squarespace-global-snippets" target="_blank" style="color: #FF6B6B;">github.com/ashlyleh/squarespace-global-snippets</a></p>
 
           <button class="btn btn-primary" onclick="this.closest('div').parentElement.remove()" style="margin-top: 20px;">
             Got it!
@@ -1572,39 +1568,35 @@ toggleMinimize() {
       this.autoSaveTimeout = null;
     }
 
-async init() {
-  Utils.log('Initializing Global Snippets Manager');
+    async init() {
+      Utils.log('Initializing Global Snippets Manager');
+      
+      // Always render snippets first (works in both editor and live site)
+      await this.renderAllSnippets();
 
-  if (this.isEditor) {
-    // Wait for Squarespace editor to load
-    await this.waitForEditor();
-    
-    // Initialize UI
-    this.ui = new UIManager(this);
-    this.ui.init();
+      if (this.isEditor) {
+        // Wait for Squarespace editor to load
+        await this.waitForEditor();
+        
+        // Initialize UI
+        this.ui = new UIManager(this);
+        this.ui.init();
 
-    // Make UI accessible globally for inline event handlers
-    window.globalSnippetsUI = this.ui;
+        // Make UI accessible globally for inline event handlers
+        window.globalSnippetsUI = this.ui;
 
-    // Setup auto-save
-    if (CONFIG.autoSave) {
-      this.setupAutoSave();
-    }
+        // Setup auto-save
+        if (CONFIG.autoSave) {
+          this.setupAutoSave();
+        }
 
-    // IMPORTANT: Also render snippets in editor mode
-    await this.renderAllSnippets();
+        // Watch for new snippet containers being added to the DOM
+        this.observeNewSnippets();
 
-    Utils.log('Editor mode initialized');
-  } else {
-    // Render snippets on live site
-    await this.renderAllSnippets();
-    Utils.log('Live site mode initialized');
-  }
-}
         Utils.log('Editor mode initialized');
       } else {
-        // Render snippets on live site
-        await this.renderAllSnippets();
+        // Also observe for new snippets on live site
+        this.observeNewSnippets();
         Utils.log('Live site mode initialized');
       }
     }
@@ -1612,16 +1604,26 @@ async init() {
     async waitForEditor() {
       return new Promise(resolve => {
         if (document.readyState === 'complete') {
-          resolve();
+          setTimeout(resolve, 1000); // Give editor extra time to load
         } else {
-          window.addEventListener('load', resolve);
+          window.addEventListener('load', () => {
+            setTimeout(resolve, 1000);
+          });
         }
       });
     }
 
     async renderAllSnippets() {
+      Utils.log('Rendering all snippets...');
       const snippets = await this.storage.getAllSnippets();
       
+      if (!snippets || Object.keys(snippets).length === 0) {
+        Utils.log('No snippets found in storage');
+        return;
+      }
+
+      Utils.log(`Found ${Object.keys(snippets).length} snippets in storage`);
+
       Object.keys(snippets).forEach(snippetId => {
         this.renderSnippet(snippetId);
       });
@@ -1643,13 +1645,60 @@ async init() {
         return;
       }
 
+      // Find all elements with this snippet ID
       const elements = document.querySelectorAll(`[${CONFIG.snippetAttribute}="${snippetId}"]`);
       
+      if (elements.length === 0) {
+        Utils.log(`No elements found with snippet ID: ${snippetId}`);
+        return;
+      }
+
       elements.forEach(element => {
-        element.innerHTML = currentVersion.html;
-        element.setAttribute(CONFIG.snippetVersionAttribute, currentVersion.version);
-        Utils.log(`Rendered snippet: ${snippetId} v${currentVersion.version}`);
+        // Only update if content is different or empty
+        if (element.innerHTML.trim() !== currentVersion.html.trim()) {
+          element.innerHTML = currentVersion.html;
+          element.setAttribute(CONFIG.snippetVersionAttribute, currentVersion.version);
+          Utils.log(`✓ Rendered snippet: ${snippetId} v${currentVersion.version} into element`);
+        }
       });
+
+      Utils.log(`Rendered snippet "${snippetId}" into ${elements.length} element(s)`);
+    }
+
+    // Watch for new snippet containers being added to the DOM
+    observeNewSnippets() {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach(mutation => {
+          mutation.addedNodes.forEach(node => {
+            if (node.nodeType === 1) { // Element node
+              // Check if the added node itself has the snippet attribute
+              if (node.hasAttribute && node.hasAttribute(CONFIG.snippetAttribute)) {
+                const snippetId = node.getAttribute(CONFIG.snippetAttribute);
+                Utils.log(`🔄 New snippet container detected: ${snippetId}`);
+                setTimeout(() => this.renderSnippet(snippetId), 100);
+              }
+              
+              // Check if any children have the snippet attribute
+              if (node.querySelectorAll) {
+                const snippetElements = node.querySelectorAll(`[${CONFIG.snippetAttribute}]`);
+                snippetElements.forEach(element => {
+                  const snippetId = element.getAttribute(CONFIG.snippetAttribute);
+                  Utils.log(`🔄 New snippet container detected in children: ${snippetId}`);
+                  setTimeout(() => this.renderSnippet(snippetId), 100);
+                });
+              }
+            }
+          });
+        });
+      });
+
+      // Observe the entire document for changes
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+
+      Utils.log('MutationObserver active - watching for new snippet containers');
     }
 
     setupAutoSave() {
@@ -1677,7 +1726,7 @@ async init() {
         });
       });
 
-      // Start observing
+      // Start observing after a delay to let the page load
       setTimeout(() => {
         document.querySelectorAll(`[${CONFIG.snippetAttribute}]`).forEach(element => {
           observer.observe(element, {
@@ -1686,7 +1735,8 @@ async init() {
             characterData: true
           });
         });
-      }, 1000);
+        Utils.log('Auto-save observer initialized');
+      }, 2000);
     }
   }
 
@@ -1698,9 +1748,8 @@ async init() {
     });
 
     // Make manager accessible globally for debugging
-    if (CONFIG.debugMode) {
-      window.globalSnippetsManager = manager;
-    }
+    window.globalSnippetsManager = manager;
+    Utils.log('Global Snippets Manager available at window.globalSnippetsManager');
   }
 
   // Start when DOM is ready
