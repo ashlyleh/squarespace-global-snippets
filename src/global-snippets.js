@@ -325,68 +325,83 @@
           background: #EE5A52;
         }
         
-        /* Control Panel */
-        .global-snippets-panel {
-          position: fixed;
-          top: 80px;
-          right: 20px;
-          width: 380px;
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-          z-index: 999999;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          max-height: calc(100vh - 100px);
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-        }
+    /* Control Panel */
+    .global-snippets-panel {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      width: 380px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      z-index: 999999;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-height: calc(100vh - 100px);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-        .global-snippets-panel.minimized {
-          width: 60px;
-          height: 60px;
-        }
+    .global-snippets-panel.minimized {
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+    }
 
-        .global-snippets-panel.minimized .panel-content {
-          display: none;
-        }
+    .global-snippets-panel.minimized .panel-content {
+      display: none;
+    }
 
-        .panel-header {
-          background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
-          color: white;
-          padding: 16px 20px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          cursor: move;
-          user-select: none;
-        }
+    .panel-header {
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: move;
+      user-select: none;
+    }
 
-        .global-snippets-panel.minimized .panel-header {
-          padding: 18px;
-          justify-content: center;
-        }
+    .global-snippets-panel.minimized .panel-header {
+      padding: 18px;
+      justify-content: center;
+      cursor: pointer;
+    }
 
-        .panel-title {
-          font-size: 16px;
-          font-weight: 600;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
+    /* Make minimize button more visible when minimized */
+    .global-snippets-panel.minimized .panel-btn {
+      width: 100%;
+      height: 100%;
+      font-size: 24px;
+      background: transparent;
+    }
 
-        .global-snippets-panel.minimized .panel-title span {
-          display: none;
-        }
+    .panel-title {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .panel-actions {
-          display: flex;
-          gap: 8px;
-        }
+    .global-snippets-panel.minimized .panel-title {
+      display: none;
+    }
 
-        .global-snippets-panel.minimized .panel-actions {
-          display: none;
-        }
+    .panel-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .global-snippets-panel.minimized .panel-actions {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      gap: 0;
+    }
 
         .panel-btn {
           background: rgba(255,255,255,0.2);
@@ -882,12 +897,21 @@
           this.switchTab(tabName);
         });
       });
-
-      // Minimize
-      document.getElementById('minimize-panel').addEventListener('click', () => {
+    
+      // Minimize/Maximize toggle
+      const minimizeBtn = document.getElementById('minimize-panel');
+      minimizeBtn.addEventListener('click', () => {
         this.controlPanel.classList.toggle('minimized');
+        // Update button text
+        if (this.controlPanel.classList.contains('minimized')) {
+          minimizeBtn.textContent = '+';
+          minimizeBtn.title = 'Maximize';
+        } else {
+          minimizeBtn.textContent = '−';
+          minimizeBtn.title = 'Minimize';
+        }
       });
-
+      
       // Help
       document.getElementById('help-panel').addEventListener('click', () => {
         this.showHelp();
