@@ -11,7 +11,7 @@
 
   // Configuration
   const CONFIG = {
-    version: '1.0.1',
+    version: '1.0.2',
     apiBase: '/api/content',
     storageKey: 'globalSnippetsData',
     snippetAttribute: 'data-global-snippet-id',
@@ -429,10 +429,12 @@
         .global-snippets-panel.minimized .panel-btn {
           width: 100%;
           height: 100%;
-          font-size: 28px;
+          font-size: 32px !important;
           background: transparent;
           border-radius: 50%;
           position: static;
+          line-height: 1;
+          padding: 0;
         }
 
         .global-snippets-panel.minimized .panel-btn:hover {
@@ -443,6 +445,13 @@
         /* Hide help button when minimized */
         .global-snippets-panel.minimized #help-panel {
           display: none;
+        }
+        
+        /* Ensure emoji is visible */
+        .global-snippets-panel.minimized #minimize-panel {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
         }
 
         .panel-content {
@@ -981,12 +990,16 @@
       const minimizeBtn = document.getElementById('minimize-panel');
       this.controlPanel.classList.toggle('minimized');
       
+      Utils.log('Toggle minimize - minimized state:', this.controlPanel.classList.contains('minimized'));
+      
       if (this.controlPanel.classList.contains('minimized')) {
         minimizeBtn.innerHTML = '✂️';
         minimizeBtn.title = 'Click to expand';
+        Utils.log('Set button to scissors emoji');
       } else {
         minimizeBtn.textContent = '−';
         minimizeBtn.title = 'Minimize';
+        Utils.log('Set button to minus sign');
       }
     }
 
