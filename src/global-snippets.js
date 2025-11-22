@@ -1572,25 +1572,35 @@ toggleMinimize() {
       this.autoSaveTimeout = null;
     }
 
-    async init() {
-      Utils.log('Initializing Global Snippets Manager');
+async init() {
+  Utils.log('Initializing Global Snippets Manager');
 
-      if (this.isEditor) {
-        // Wait for Squarespace editor to load
-        await this.waitForEditor();
-        
-        // Initialize UI
-        this.ui = new UIManager(this);
-        this.ui.init();
+  if (this.isEditor) {
+    // Wait for Squarespace editor to load
+    await this.waitForEditor();
+    
+    // Initialize UI
+    this.ui = new UIManager(this);
+    this.ui.init();
 
-        // Make UI accessible globally for inline event handlers
-        window.globalSnippetsUI = this.ui;
+    // Make UI accessible globally for inline event handlers
+    window.globalSnippetsUI = this.ui;
 
-        // Setup auto-save
-        if (CONFIG.autoSave) {
-          this.setupAutoSave();
-        }
+    // Setup auto-save
+    if (CONFIG.autoSave) {
+      this.setupAutoSave();
+    }
 
+    // IMPORTANT: Also render snippets in editor mode
+    await this.renderAllSnippets();
+
+    Utils.log('Editor mode initialized');
+  } else {
+    // Render snippets on live site
+    await this.renderAllSnippets();
+    Utils.log('Live site mode initialized');
+  }
+}
         Utils.log('Editor mode initialized');
       } else {
         // Render snippets on live site
