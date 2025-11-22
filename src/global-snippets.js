@@ -342,66 +342,61 @@
       overflow: hidden;
     }
 
-    .global-snippets-panel.minimized {
-      width: 60px;
-      height: 60px;
-      cursor: pointer;
-    }
+.global-snippets-panel.minimized {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  border-radius: 50%; /* Make it circular */
+  overflow: visible; /* Ensure content isn't clipped */
+}
 
-    .global-snippets-panel.minimized .panel-content {
-      display: none;
-    }
+.global-snippets-panel.minimized .panel-content {
+  display: none;
+}
 
-    .panel-header {
-      background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
-      color: white;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: move;
-      user-select: none;
-    }
+.panel-header {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: move;
+  user-select: none;
+  border-radius: 12px 12px 0 0; /* Add this */
+}
 
-    .global-snippets-panel.minimized .panel-header {
-      padding: 18px;
-      justify-content: center;
-      cursor: pointer;
-    }
+.global-snippets-panel.minimized .panel-header {
+  padding: 0; /* Change from 18px to 0 */
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50%; /* Make header circular when minimized */
+  width: 60px;
+  height: 60px;
+}
 
-    /* Make minimize button more visible when minimized */
-    .global-snippets-panel.minimized .panel-btn {
-      width: 100%;
-      height: 100%;
-      font-size: 24px;
-      background: transparent;
-    }
+.global-snippets-panel.minimized .panel-title {
+  display: none;
+}
 
-    .panel-title {
-      font-size: 16px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+.global-snippets-panel.minimized .panel-actions {
+  position: static; /* Change from absolute */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .global-snippets-panel.minimized .panel-title {
-      display: none;
-    }
-
-    .panel-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .global-snippets-panel.minimized .panel-actions {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      gap: 0;
-    }
+/* Make the button fill the space and be visible */
+.global-snippets-panel.minimized .panel-btn {
+  width: 100%;
+  height: 100%;
+  font-size: 28px; /* Larger emoji */
+  background: transparent;
+  border-radius: 50%;
+  position: static; /* Not absolute */
+}
 
         .panel-btn {
           background: rgba(255,255,255,0.2);
