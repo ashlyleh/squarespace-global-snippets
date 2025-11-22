@@ -1434,7 +1434,7 @@ toggleMinimize() {
           </ul>
 
           <h3>🔗 GitHub Repository</h3>
-          <p>For updates, documentation, and support:</p>
+          <p>🤔 For updates, documentation, and support:</p>
           <p><a href="https://github.com/yourusername/squarespace-global-snippets" target="_blank" style="color: #FF6B6B;">github.com/yourusername/squarespace-global-snippets</a></p>
 
           <button class="btn btn-primary" onclick="this.closest('div').parentElement.remove()" style="margin-top: 20px;">
