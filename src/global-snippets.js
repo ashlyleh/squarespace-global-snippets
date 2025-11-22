@@ -293,7 +293,7 @@
       this.markExistingSnippets();
     }
 
-    injectStyles() {
+injectStyles() {
       const style = document.createElement('style');
       style.id = 'global-snippets-styles';
       style.textContent = `
@@ -325,78 +325,85 @@
           background: #EE5A52;
         }
         
-    /* Control Panel */
-    .global-snippets-panel {
-      position: fixed;
-      top: 80px;
-      right: 20px;
-      width: 380px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-      z-index: 999999;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      max-height: calc(100vh - 100px);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+        /* Control Panel */
+        .global-snippets-panel {
+          position: fixed;
+          top: 80px;
+          right: 20px;
+          width: 380px;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+          z-index: 999999;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          max-height: calc(100vh - 100px);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          transition: all 0.3s ease;
+        }
 
-.global-snippets-panel.minimized {
-  width: 60px;
-  height: 60px;
-  cursor: pointer;
-  border-radius: 50%; /* Make it circular */
-  overflow: visible; /* Ensure content isn't clipped */
-}
+        .global-snippets-panel.minimized {
+          width: 60px;
+          height: 60px;
+          cursor: pointer;
+          border-radius: 50%;
+          overflow: visible;
+        }
 
-.global-snippets-panel.minimized .panel-content {
-  display: none;
-}
+        .global-snippets-panel.minimized .panel-content {
+          display: none;
+        }
 
-.panel-header {
-  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
-  color: white;
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: move;
-  user-select: none;
-  border-radius: 12px 12px 0 0; /* Add this */
-}
+        .panel-header {
+          background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+          color: white;
+          padding: 16px 20px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          cursor: move;
+          user-select: none;
+          border-radius: 12px 12px 0 0;
+          transition: all 0.3s ease;
+        }
 
-.global-snippets-panel.minimized .panel-header {
-  padding: 0; /* Change from 18px to 0 */
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 50%; /* Make header circular when minimized */
-  width: 60px;
-  height: 60px;
-}
+        .global-snippets-panel.minimized .panel-header {
+          padding: 0;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          border-radius: 50%;
+          width: 60px;
+          height: 60px;
+        }
 
-.global-snippets-panel.minimized .panel-title {
-  display: none;
-}
+        .panel-title {
+          font-size: 16px;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
 
-.global-snippets-panel.minimized .panel-actions {
-  position: static; /* Change from absolute */
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+        .global-snippets-panel.minimized .panel-title {
+          display: none;
+        }
 
-/* Make the button fill the space and be visible */
-.global-snippets-panel.minimized .panel-btn {
-  width: 100%;
-  height: 100%;
-  font-size: 28px; /* Larger emoji */
-  background: transparent;
-  border-radius: 50%;
-  position: static; /* Not absolute */
-}
+        .panel-actions {
+          display: flex;
+          gap: 8px;
+        }
+
+        .global-snippets-panel.minimized .panel-actions {
+          position: static;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0;
+        }
 
         .panel-btn {
           background: rgba(255,255,255,0.2);
@@ -410,11 +417,32 @@
           align-items: center;
           justify-content: center;
           transition: all 0.2s;
+          font-size: 16px;
         }
 
         .panel-btn:hover {
           background: rgba(255,255,255,0.3);
           transform: scale(1.05);
+        }
+
+        /* Minimized button styling */
+        .global-snippets-panel.minimized .panel-btn {
+          width: 100%;
+          height: 100%;
+          font-size: 28px;
+          background: transparent;
+          border-radius: 50%;
+          position: static;
+        }
+
+        .global-snippets-panel.minimized .panel-btn:hover {
+          background: rgba(255,255,255,0.15);
+          transform: scale(1.1);
+        }
+
+        /* Hide help button when minimized */
+        .global-snippets-panel.minimized #help-panel {
+          display: none;
         }
 
         .panel-content {
